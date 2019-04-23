@@ -27,7 +27,7 @@
                 </el-date-picker>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="90">
+            <el-table-column fixed="right" label="操作" width="100">
               <template slot-scope="scope">
                 <el-button type="text" size="mini" @click="handleInsert(scope.row)" >插入</el-button>
                 <el-button type="text" size="mini" @click="handleRemove(scope.row)" >移除</el-button>
