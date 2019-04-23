@@ -1,19 +1,16 @@
 <template>
   <div class="app">
     <el-container>
-      <el-header>
-        甘特图生成
-        <!-- <el-button type="primary" size="small" @click="drawPie">甘特图生成</el-button> -->
-      </el-header>
       <el-container style="height: calc(100vh - 60px);">
         <el-aside width="700px">
           <el-table :data="tableList" border size="min">
             <el-table-column prop="title" label="任务">
               <template slot-scope="scope">
-                <el-select v-model="scope.row.title" size="mini" filterable allow-create default-first-option placeholder="请输入内容">
+                <el-input v-model="scope.row.title" size="mini"></el-input>
+                <!-- <el-select v-model="scope.row.title" size="mini" filterable allow-create default-first-option placeholder="请输入内容">
                   <el-option label="开发" value="开发"></el-option>
                   <el-option label="测试" value="测试"></el-option>
-                </el-select>
+                </el-select> -->
               </template>
             </el-table-column>
             <el-table-column prop="rangeTime" label="开始-结束日期" width="380">
@@ -27,7 +24,7 @@
                 </el-date-picker>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="90">
+            <el-table-column fixed="right" label="操作" width="100">
               <template slot-scope="scope">
                 <el-button type="text" size="mini" @click="handleInsert(scope.row)" >插入</el-button>
                 <el-button type="text" size="mini" @click="handleRemove(scope.row)" >移除</el-button>
@@ -36,6 +33,8 @@
           </el-table>
           <el-button size="small" @click="handleAdd">新增</el-button>
           <div style="position: relative; margin-bottom: 10px; padding: 0 10px">
+            <span style="position:absolute; left: 0px;line-height: 38px">寬度调节</span>
+            <el-slider style="margin-left: 80px" @change="nextDrawPie" v-model="chartWidth"></el-slider>
             <span style="position:absolute; left: 0px;line-height: 38px">高度调节</span>
             <el-slider style="margin-left: 80px" @change="nextDrawPie" v-model="chartHeight"></el-slider>
           </div>
@@ -49,12 +48,16 @@
 </template>
 
 <script>
+// import echarts from 'echarts';
+// "echarts": "^4.2.1",
+
 export default {
   name: "app",
   data() {
     return {
       charts: null,
-      chartHeight: 100,
+      chartWidth: 50,
+      chartHeight: 50,
       tableList: []
     };
   },
@@ -77,11 +80,6 @@ export default {
       let i = 0;
 
       this.tableList.forEach((item, index)=> {
-        result.push({
-          id: i++,
-          title: item.title,
-          rangeTime: item.rangeTime
-        })
         if (item.id === row.id) {
           result.push({
             id: i++,
@@ -89,6 +87,11 @@ export default {
             rangeTime: []
           })
         }
+        result.push({
+          id: i++,
+          title: item.title,
+          rangeTime: item.rangeTime
+        })
       });
       this.tableList = result;
     },
@@ -127,14 +130,14 @@ export default {
       parent.innerHTML = '';
       let ele = document.createElement("div");
       ele.setAttribute("id", 'chart'); 
-      ele.style.width = this.chartHeight * (main.clientWidth - 20) / 100 + "px";
-      ele.style.height = this.chartHeight * (main.clientHeight - 40) / 100 + "px";
+      ele.style.width = this.chartWidth * (main.clientWidth - 20) / 50 + "px";
+      ele.style.height = this.chartHeight * (main.clientHeight - 40) / 50 + "px";
       parent.appendChild(ele); 
       this.charts = echarts.init(document.getElementById('chart'));
       this.drawPie();
     },
     drawPie() {
-      let barLength = 15;
+      let barLength = 30;
       let titleList = [];
       let startTimeList = [];
       let endTimeList = [];
@@ -158,11 +161,27 @@ export default {
           containLabel: true,
           left: 20
         },
+  // 　　　dataZoom:[{
+  // 　　　　type: 'slider',//图表下方的伸缩条
+  // 　　　　show : true, //是否显示
+  // 　　　　realtime : true, //拖动时，是否实时更新系列的视图
+  // 　　　　start : 0, //伸缩条开始位置（1-100），可以随时更改
+  // 　　　　end : 100, //伸缩条结束位置（1-100），可以随时更改
+  // 　　　}],
         xAxis: {
-          type: "time"
+          type: "time",
+					"key":"month",
+					"field":"month",
+					"timeFormat": 'month',
+					//'splitNum': 7,
+					"rotate":45,
+					"tickMax": true,
+					 min: 'dataMin',
+					 max: 'dataMax',
         },
         yAxis: [
           {
+            show: false,
             data: titleList
           }
         ],
@@ -173,39 +192,39 @@ export default {
             }
           }
         },
-        tooltip: {
-          trigger: "axis",
-          formatter: function(params) {
-            var res = params[0].name + "</br>";
-            var date0 = params[0].data;
-            var date1 = params[1].data;
-            if (!date0 || !date0.getFullYear || !date1 || !date1.getFullYear) {
-              return false;
-            }
-            date0 =
-              date0.getFullYear() +
-              "/" +
-              (date0.getMonth() + 1) +
-              "/" +
-              date0.getDate();
-            date1 =
-              date1.getFullYear() +
-              "/" +
-              (date1.getMonth() + 1) +
-              "/" +
-              date1.getDate();
-            res +=
-              params[0].seriesName +
-              "~" +
-              params[1].seriesName +
-              ":</br>" +
-              date0 +
-              "~" +
-              date1 +
-              "</br>";
-            return res;
-          }
-        },
+        // tooltip: {
+        //   trigger: "axis",
+        //   formatter: function(params) {
+        //     var res = params[0].name + "</br>";
+        //     var date0 = params[0].data;
+        //     var date1 = params[1].data;
+        //     if (!date0 || !date0.getFullYear || !date1 || !date1.getFullYear) {
+        //       return false;
+        //     }
+        //     date0 =
+        //       date0.getFullYear() +
+        //       "/" +
+        //       (date0.getMonth() + 1) +
+        //       "/" +
+        //       date0.getDate();
+        //     date1 =
+        //       date1.getFullYear() +
+        //       "/" +
+        //       (date1.getMonth() + 1) +
+        //       "/" +
+        //       date1.getDate();
+        //     res +=
+        //       params[0].seriesName +
+        //       "~" +
+        //       params[1].seriesName +
+        //       ":</br>" +
+        //       date0 +
+        //       "~" +
+        //       date1 +
+        //       "</br>";
+        //     return res;
+        //   }
+        // },
         series: [
           {
             name: "开始时间",
@@ -224,10 +243,26 @@ export default {
             type: "bar",
             barWidth: barLength,
             stack: "test1",
+            label: {
+              normal: {
+                show: true,
+                position: 'inside',
+                distance: 15,
+                align: 'left',
+                verticalAlign: 'left',
+                rotate: 0,
+                color: '#333',
+                formatter: '{b}',
+                textStyle: {
+                    color: '#333'
+                },
+                fontSize: 16
+              }
+            },
             itemStyle: {
               normal: {
-                color: "#F98563"
-              }
+                color: "#F98563",
+              },
             },
             data: endTimeList
           }
