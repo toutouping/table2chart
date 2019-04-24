@@ -49,6 +49,7 @@
 
 <script>
 // import echarts from 'echarts';
+import {formatDate} from 'src/common/date.js';
 // "echarts": "^4.2.1",
 
 export default {
@@ -75,23 +76,23 @@ export default {
     }
   },
   methods: {
-    handleInsert (row) {
+    handleInsert(row) {
       let result = [];
       let i = 0;
 
-      this.tableList.forEach((item, index)=> {
+      this.tableList.forEach((item, index) => {
         if (item.id === row.id) {
           result.push({
             id: i++,
             title: "",
             rangeTime: []
-          })
+          });
         }
         result.push({
           id: i++,
           title: item.title,
           rangeTime: item.rangeTime
-        })
+        });
       });
       this.tableList = result;
     },
@@ -124,16 +125,17 @@ export default {
         }
       }
     },
-    nextDrawPie (size) {
+    nextDrawPie(size) {
       let main = document.getElementById("main");
       let parent = document.getElementById("chart-contain");
-      parent.innerHTML = '';
+      parent.innerHTML = "";
       let ele = document.createElement("div");
-      ele.setAttribute("id", 'chart'); 
+      ele.setAttribute("id", "chart");
       ele.style.width = this.chartWidth * (main.clientWidth - 20) / 50 + "px";
-      ele.style.height = this.chartHeight * (main.clientHeight - 40) / 50 + "px";
-      parent.appendChild(ele); 
-      this.charts = echarts.init(document.getElementById('chart'));
+      ele.style.height =
+        this.chartHeight * (main.clientHeight - 40) / 50 + "px";
+      parent.appendChild(ele);
+      this.charts = echarts.init(document.getElementById("chart"));
       this.drawPie();
     },
     drawPie() {
@@ -144,14 +146,14 @@ export default {
 
       this.tableList.forEach(item => {
         titleList.push(item.title);
-        if (item.rangeTime && item.rangeTime.length > 0 ) {
+        if (item.rangeTime && item.rangeTime.length > 0) {
           startTimeList.push(item.rangeTime[0]);
           endTimeList.push(item.rangeTime[1]);
         }
       });
       let option = {
         title: {
-          text: "项目进度表",
+          text: "整体进展计划",
           left: 10
         },
         legend: {
@@ -161,23 +163,29 @@ export default {
           containLabel: true,
           left: 20
         },
-  // 　　　dataZoom:[{
-  // 　　　　type: 'slider',//图表下方的伸缩条
-  // 　　　　show : true, //是否显示
-  // 　　　　realtime : true, //拖动时，是否实时更新系列的视图
-  // 　　　　start : 0, //伸缩条开始位置（1-100），可以随时更改
-  // 　　　　end : 100, //伸缩条结束位置（1-100），可以随时更改
-  // 　　　}],
+        // 　　　dataZoom:[{
+        // 　　　　type: 'slider',//图表下方的伸缩条
+        // 　　　　show : true, //是否显示
+        // 　　　　realtime : true, //拖动时，是否实时更新系列的视图
+        // 　　　　start : 0, //伸缩条开始位置（1-100），可以随时更改
+        // 　　　　end : 100, //伸缩条结束位置（1-100），可以随时更改
+        // 　　　}],
         xAxis: {
           type: "time",
-					"key":"month",
-					"field":"month",
-					"timeFormat": 'month',
-					//'splitNum': 7,
-					"rotate":45,
-					"tickMax": true,
-					 min: 'dataMin',
-					 max: 'dataMax',
+          key: "month",
+          field: "month",
+          timeFormat: "month",
+          //'splitNum': 7,
+          // rotate: 45,
+          // tickMax: true,
+          min: "dataMin",
+          max: "dataMax",
+          nameLocation:'start',
+          axisLabel: {
+            formatter : function(data) {
+              return formatDate(new Date(data), 'MM/dd'); 
+            }
+          }
         },
         yAxis: [
           {
@@ -192,39 +200,6 @@ export default {
             }
           }
         },
-        // tooltip: {
-        //   trigger: "axis",
-        //   formatter: function(params) {
-        //     var res = params[0].name + "</br>";
-        //     var date0 = params[0].data;
-        //     var date1 = params[1].data;
-        //     if (!date0 || !date0.getFullYear || !date1 || !date1.getFullYear) {
-        //       return false;
-        //     }
-        //     date0 =
-        //       date0.getFullYear() +
-        //       "/" +
-        //       (date0.getMonth() + 1) +
-        //       "/" +
-        //       date0.getDate();
-        //     date1 =
-        //       date1.getFullYear() +
-        //       "/" +
-        //       (date1.getMonth() + 1) +
-        //       "/" +
-        //       date1.getDate();
-        //     res +=
-        //       params[0].seriesName +
-        //       "~" +
-        //       params[1].seriesName +
-        //       ":</br>" +
-        //       date0 +
-        //       "~" +
-        //       date1 +
-        //       "</br>";
-        //     return res;
-        //   }
-        // },
         series: [
           {
             name: "开始时间",
@@ -246,23 +221,47 @@ export default {
             label: {
               normal: {
                 show: true,
-                position: 'inside',
+                position: "inside",
                 distance: 15,
-                align: 'left',
-                verticalAlign: 'left',
+                align: "left",
+                verticalAlign: "left",
                 rotate: 0,
-                color: '#333',
-                formatter: '{b}',
+                color: "#333",
+                formatter: "{b}",
                 textStyle: {
-                    color: '#333'
+                  color: "#333"
                 },
                 fontSize: 16
               }
             },
             itemStyle: {
               normal: {
-                color: "#F98563",
+                color: "#F98563"
+              }
+            },
+            markLine: {
+              symbol: "none",
+              label: {
+                normal: {
+                  fontSize:14,
+                  formatter : function(data) {
+                    return '今天' //  + formatDate(data.value, 'MM/dd'); 
+                  }
+                }
               },
+              data: [
+                {
+                  name: 'Y 轴值为 100 的水平线',
+                  xAxis: new Date(),
+                  lineStyle: {
+                    normal: {
+                      color: "green",
+                      width: 1,
+                      type: "solid"
+                    }
+                  }
+                }
+              ]
             },
             data: endTimeList
           }
