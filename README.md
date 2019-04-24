@@ -5,6 +5,9 @@
 ## 效果展示
 https://toutouping.github.io/table2chart/dist/index.html
 
+
+> A Vue.js project
+
 ## Build Setup
 
 ``` bash
