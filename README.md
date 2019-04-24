@@ -3,9 +3,8 @@
 通过表格填入相关数据，实时生成甘特图
 
 ## 效果展示
+https://toutouping.github.io/table2chart/dist/index.html
 
-## 参考资料
-https://blog.csdn.net/mulumeng981/article/details/77983485#commentBox
 
 > A Vue.js project
 
