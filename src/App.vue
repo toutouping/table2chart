@@ -57,8 +57,8 @@ export default {
   data() {
     return {
       charts: null,
-      chartWidth: 50,
-      chartHeight: 50,
+      chartWidth: 25,
+      chartHeight: 25,
       tableList: []
     };
   },
@@ -131,9 +131,8 @@ export default {
       parent.innerHTML = "";
       let ele = document.createElement("div");
       ele.setAttribute("id", "chart");
-      ele.style.width = this.chartWidth * (main.clientWidth - 20) / 50 + "px";
-      ele.style.height =
-        this.chartHeight * (main.clientHeight - 40) / 50 + "px";
+      ele.style.width = this.chartWidth * (main.clientWidth - 20) / 25 + "px";
+      ele.style.height = this.chartHeight * (main.clientHeight - 40) / 25 + "px";
       parent.appendChild(ele);
       this.charts = echarts.init(document.getElementById("chart"));
       this.drawPie();
@@ -175,12 +174,11 @@ export default {
           key: "month",
           field: "month",
           timeFormat: "month",
-          //'splitNum': 7,
-          // rotate: 45,
-          // tickMax: true,
+          tickMax: true,
           min: "dataMin",
           max: "dataMax",
-          nameLocation:'start',
+          nameLocation:'end',
+          rotate: 45,
           axisLabel: {
             formatter : function(data) {
               return formatDate(new Date(data), 'MM/dd'); 

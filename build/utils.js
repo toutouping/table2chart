@@ -63,7 +63,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({ // 如果传入的options存在extract且为true
         use: loaders, // 处理的loader
-        fallback: 'vue-style-loader' // 没有被提取分离时使用的loader
+        fallback: 'vue-style-loader', // 没有被提取分离时使用的loader
+        publicPath: '../../'
       })
     } else {
       return ['vue-style-loader'].concat(loaders)
