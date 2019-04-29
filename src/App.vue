@@ -174,11 +174,11 @@ export default {
           key: "month",
           field: "month",
           timeFormat: "month",
-          // rotate: 45,
           tickMax: true,
           min: "dataMin",
           max: "dataMax",
-          nameLocation:'start',
+          nameLocation:'end',
+          rotate: 45,
           axisLabel: {
             formatter : function(data) {
               return formatDate(new Date(data), 'MM/dd'); 
